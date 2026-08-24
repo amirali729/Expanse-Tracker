@@ -9,3 +9,19 @@ export type CreatedUserResponse = {
   email: string;
   createdAt: Date;
 };
+export interface loginUserInput {
+  username: string;
+  password: string;
+}
+
+export interface loginUserResponse {
+  username: string;
+  email: string;
+  accessToken: string;
+}
+
+export interface CreatedUserSessionInput {
+  userId: number;
+  tokenHash: string;
+  expiresAt: Date;
+}

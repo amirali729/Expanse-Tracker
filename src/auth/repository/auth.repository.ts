@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/db/prisma.service';
-import { User } from 'src/generated/prisma/client';
-import { CreatedUserInput } from '../types/auth.type';
+import { RefreshSession, User } from 'src/generated/prisma/client';
+import { CreatedUserInput, CreatedUserSessionInput } from '../types/auth.type';
 
 @Injectable()
 export class AuthRepsoitory {
@@ -26,5 +26,17 @@ export class AuthRepsoitory {
       },
     });
     return user;
+  }
+
+  async createSession(sessionData: CreatedUserSessionInput): Promise<RefreshSession> {
+    const { userId, expiresAt, tokenHash } = sessionData;
+    const session = await this.prisma.refreshSession.create({
+      data: {
+        userId,
+        tokenHash,
+        expiresAt,
+      },
+    });
+    return session;
   }
 }

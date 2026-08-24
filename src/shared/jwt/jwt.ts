@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 
 type jwtData = {
-  userId: string;
+  userId: number;
   username: string;
 };
 
