@@ -27,4 +27,14 @@ export class AccountRespository {
     });
     return account;
   }
+
+  async findAccountById(userId: number, accountId: number): Promise<Account | null> {
+    const account = await this.prisma.account.findFirst({
+      where: {
+        userId,
+        id: accountId,
+      },
+    });
+    return account;
+  }
 }

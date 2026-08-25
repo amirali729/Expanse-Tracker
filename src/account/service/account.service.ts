@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { AccountRespository } from '../repository/account.repository';
 import { createdAccountData, createdAccountResponse } from '../types/account.types';
 
@@ -28,5 +33,14 @@ export class AccountService {
       type: createdAccount.accountType,
       createdAt: createdAccount.createdAt,
     };
+  }
+
+  async accountDetail(userId: number, accountId: number) {
+    const account = await this.accountRepo.findAccountById(userId, accountId);
+    if (!account) {
+      throw new NotFoundException('account not found');
+    }
+
+    return account;
   }
 }
