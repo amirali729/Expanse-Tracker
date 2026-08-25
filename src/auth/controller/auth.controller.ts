@@ -1,11 +1,12 @@
 import { Body, Controller, HttpCode, HttpStatus, Post, Res } from '@nestjs/common';
 import { AuthService } from '../service/auth.service';
 import { CreateUserDto, loginUserDto } from '../dto/auth.dto';
+import type { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authservice: AuthService) {}
-  @Post()
+  @Post('signup')
   @HttpCode(HttpStatus.CREATED)
   async createUser(@Body() dto: CreateUserDto) {
     const user = await this.authservice.createUser(dto);
@@ -17,20 +18,25 @@ export class AuthController {
     };
   }
 
-  @Post()
+  @Post('login')
   @HttpCode(HttpStatus.ACCEPTED)
   async loginUser(@Body() dto: loginUserDto, @Res({ passthrough: true }) response: Response) {
     const user = await this.authservice.loginUser(dto);
-    response.cookie('refresh_token', result.refreshToken, {
+    response.cookie('refresh_token', user.refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: false, // it is used for https but we doing in local environment
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+
     return {
-      statusCode: HttpStatus.CREATED,
+      statusCode: HttpStatus.OK,
       message: 'User created successfully',
-      data: user,
+      data: {
+        username: user.username,
+        email: user.email,
+        accessToken: user.accessToken,
+      },
     };
   }
 }

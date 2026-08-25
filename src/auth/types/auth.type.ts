@@ -18,6 +18,7 @@ export interface loginUserResponse {
   username: string;
   email: string;
   accessToken: string;
+  refreshToken: string;
 }
 
 export interface CreatedUserSessionInput {

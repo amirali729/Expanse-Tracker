@@ -21,13 +21,11 @@ export class AuthService {
     private readonly jwt: jwtService,
   ) {}
   async createUser(userData: CreatedUserInput): Promise<CreatedUserResponse> {
-    userData.username.toLowerCase();
-    userData.email.toLowerCase();
     const user = await this.authRepo.findUserByUsername(userData.username);
     if (user) {
       throw new ConflictException('username and email must be unique');
     }
-    const hashedPassword = bcrypt.hashSync(userData.username, 10);
+    const hashedPassword = bcrypt.hashSync(userData.password, 10);
     userData.password = hashedPassword;
     const createdUser = await this.authRepo.create(userData);
     if (!createdUser) {
@@ -37,7 +35,6 @@ export class AuthService {
   }
 
   async loginUser(userData: loginUserInput): Promise<loginUserResponse> {
-    userData.username.toLowerCase();
     const user = await this.authRepo.findUserByUsername(userData.username);
     if (!user) {
       throw new BadRequestException('please give valid username or create account');
@@ -65,6 +62,7 @@ export class AuthService {
       username: user.username,
       email: user.email,
       accessToken,
+      refreshToken,
     };
   }
 }
