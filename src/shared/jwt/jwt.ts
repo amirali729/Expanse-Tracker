@@ -1,41 +1,66 @@
 import { Injectable } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 
-type jwtData = {
+export type AccessTokenPayload = {
   userId: number;
   username: string;
 };
 
 @Injectable()
-export class jwtService {
-  createAccessToken(data: jwtData) {
+export class JwtService {
+  createAccessToken(data: AccessTokenPayload) {
     const secret = process.env.ACCESS_SCERET_TOKEN;
+
     if (!secret) {
-      throw new Error('secret are not configured');
+      throw new Error('Access token secret is not configured');
     }
-    return jwt.sign(data, secret as jwt.Secret, {
+
+    return jwt.sign(data, secret, {
       expiresIn: process.env.ACCESS_TOKEN_EXPIRY as jwt.SignOptions['expiresIn'],
     });
   }
-  createRefreshToken(data: jwtData) {
+
+  createRefreshToken(data: AccessTokenPayload) {
     const secret = process.env.REFRESH_SCERET_TOKEN;
+
     if (!secret) {
-      throw new Error('secret are not configured');
+      throw new Error('Refresh token secret is not configured');
     }
-    return jwt.sign(data, secret as jwt.Secret, {
+
+    return jwt.sign(data, secret, {
       expiresIn: process.env.REFRESH_TOKEN_EXPIRY as jwt.SignOptions['expiresIn'],
     });
   }
 
-  verifyAccessToken(token: string) {
-    const secret = process.env.ACCESS_SCERET_TOKEN as jwt.Secret;
+  verifyAccessToken(token: string): AccessTokenPayload {
+    const secret = process.env.ACCESS_SCERET_TOKEN;
+
+    if (!secret) {
+      throw new Error('Access token secret is not configured');
+    }
+
     const payload = jwt.verify(token, secret);
-    return payload;
+
+    if (typeof payload === 'string') {
+      throw new Error('Invalid access token payload');
+    }
+
+    return payload as AccessTokenPayload;
   }
 
-  verifyRefreshToken(token: string) {
-    const secret = process.env.REFRESH_SCERET_TOKEN as jwt.Secret;
+  verifyRefreshToken(token: string): AccessTokenPayload {
+    const secret = process.env.REFRESH_SCERET_TOKEN;
+
+    if (!secret) {
+      throw new Error('Refresh token secret is not configured');
+    }
+
     const payload = jwt.verify(token, secret);
-    return payload;
+
+    if (typeof payload === 'string') {
+      throw new Error('Invalid refresh token payload');
+    }
+
+    return payload as AccessTokenPayload;
   }
 }
