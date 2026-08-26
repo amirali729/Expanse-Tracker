@@ -37,4 +37,13 @@ export class AccountRespository {
     });
     return account;
   }
+
+  async findAllAccountByUserId(userId: number): Promise<Account[]> {
+    const accounts = await this.prisma.account.findMany({
+      where: {
+        userId,
+      },
+    });
+    return accounts;
+  }
 }

@@ -21,7 +21,7 @@ export class AccountController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(AuthGuard)
-  async CreateAccount(@Body() dto: CreateAccountDto, @Req() request: Request) {
+  async createAccount(@Body() dto: CreateAccountDto, @Req() request: Request) {
     const accountData = {
       ...dto,
       userId: request.user.userId,
@@ -37,13 +37,26 @@ export class AccountController {
   @Get(':accountId')
   @HttpCode(HttpStatus.ACCEPTED)
   @UseGuards(AuthGuard)
-  async updateAccount(@Req() request: Request, @Param('accountId') id: string) {
+  async accountDetails(@Req() request: Request, @Param('accountId') id: string) {
     const userId = request.user.userId;
     const accountId = Number(id);
     const data = await this.accountService.accountDetail(userId, accountId);
     return {
       statusCode: HttpStatus.ACCEPTED,
       message: 'Account retrieved successfully',
+      data: data,
+    };
+  }
+
+  @Get()
+  @HttpCode(HttpStatus.ACCEPTED)
+  @UseGuards(AuthGuard)
+  async allAccount(@Req() request: Request) {
+    const userId = request.user.userId;
+    const data = await this.accountService.getAllAccounts(userId);
+    return {
+      statusCode: HttpStatus.ACCEPTED,
+      message: 'Accounts retrieved successfully',
       data: data,
     };
   }

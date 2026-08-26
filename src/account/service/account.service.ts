@@ -43,4 +43,13 @@ export class AccountService {
 
     return account;
   }
+
+  async getAllAccounts(userId: number) {
+    const accounts = await this.accountRepo.findAllAccountByUserId(userId);
+    if (!accounts) {
+      throw new NotFoundException('account not found');
+    }
+
+    return accounts;
+  }
 }
