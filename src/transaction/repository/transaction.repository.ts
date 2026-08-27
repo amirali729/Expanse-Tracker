@@ -1,0 +1,35 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/db/prisma.service';
+import { createTransactionInput } from '../types/transaction.types';
+
+@Injectable()
+export class TransactionRepository {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(transactionData: createTransactionInput, userId: number) {
+    const transaction = await this.prisma.transaction.create({
+      data: {
+        userId,
+        amount: transactionData.amount,
+        transactionType: transactionData.transactionType,
+        categoryId: transactionData.categoryId,
+        accountId: transactionData.accountId,
+        description: transactionData.description,
+      },
+    });
+    return transaction;
+  }
+
+  async getUserCurrentTotalAmount(userId: number) {
+    const totalAmount = await this.prisma.transaction.aggregate({
+      where: {
+        userId,
+        transactionType: 'INCOME',
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+    return totalAmount;
+  }
+}

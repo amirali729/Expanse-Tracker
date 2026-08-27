@@ -5,6 +5,7 @@ import { PrismaModule } from './db/prisma.module';
 import { AccountController } from './account/controller/account.controller';
 import { AccountModule } from './account/account.module';
 import { CategoryModule } from './category/category.module';
+import { TransactionModule } from './transaction/transaction.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -15,6 +16,7 @@ import { CategoryModule } from './category/category.module';
     PrismaModule,
     AccountModule,
     CategoryModule,
+    TransactionModule,
   ],
   controllers: [AccountController],
   providers: [],
