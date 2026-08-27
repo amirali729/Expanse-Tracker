@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { AccountRespository } from '../repository/account.repository';
 import { createdAccountData, createdAccountResponse } from '../types/account.types';
+import { toAccountResponse } from '../mapper/account.mapper';
 
 @Injectable()
 export class AccountService {
@@ -20,19 +21,7 @@ export class AccountService {
     if (!createdAccount) {
       throw new InternalServerErrorException('cannot create user right now please try again');
     }
-    if (createdAccount.provider) {
-      return {
-        name: createdAccount.name,
-        type: createdAccount.accountType,
-        provider: createdAccount.provider,
-        createdAt: createdAccount.createdAt,
-      };
-    }
-    return {
-      name: createdAccount.name,
-      type: createdAccount.accountType,
-      createdAt: createdAccount.createdAt,
-    };
+    return toAccountResponse(createdAccount);
   }
 
   async accountDetail(userId: number, accountId: number) {
@@ -41,7 +30,7 @@ export class AccountService {
       throw new NotFoundException('account not found');
     }
 
-    return account;
+    return toAccountResponse(account);
   }
 
   async getAllAccounts(userId: number) {
@@ -50,6 +39,6 @@ export class AccountService {
       throw new NotFoundException('account not found');
     }
 
-    return accounts;
+    return accounts.map(toAccountResponse);
   }
 }

@@ -33,6 +33,9 @@ export class CategoryRespository {
       where: {
         userId,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     return categories;

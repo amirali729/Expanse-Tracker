@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { CategoryRespository } from '../repository/category.repository';
 import { createCategoryData, createCategoryResponse } from '../types/category.types';
+import { toCategoryResponse } from '../mapper/category.mapper';
 
 @Injectable()
 export class CategoryService {
@@ -25,12 +26,7 @@ export class CategoryService {
         'cannot created category rightnow please try again late',
       );
     }
-    return {
-      id: createdCategory.id,
-      name: createdCategory.name,
-      description: createdCategory.description,
-      createdAt: createdCategory.createdAt,
-    };
+    return toCategoryResponse(createdCategory);
   }
 
   async findAllCategory(userId: number) {
@@ -38,6 +34,6 @@ export class CategoryService {
     if (!categories) {
       throw new NotFoundException('no category found');
     }
-    return categories;
+    return categories.map(toCategoryResponse);
   }
 }
