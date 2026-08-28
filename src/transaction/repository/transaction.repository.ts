@@ -73,4 +73,13 @@ export class TransactionRepository {
     });
     return transaction;
   }
+
+  async findAllTransactionsByUserId(userId: number): Promise<Transaction[]> {
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        userId,
+      },
+    });
+    return transactions;
+  }
 }

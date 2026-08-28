@@ -57,4 +57,17 @@ export class TransactionController {
       data: transaction,
     };
   }
+
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  async allTransaction(@Req() request: Request) {
+    const userId = request.user.userId;
+    const transactions = await this.transactionService.getAllTransaction(userId);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Transactions retrieved successfully',
+      data: transactions,
+    };
+  }
 }

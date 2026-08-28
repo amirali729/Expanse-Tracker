@@ -17,7 +17,7 @@ export class CreateTransationDto {
   @IsPositive({ message: 'account Id couldnot be negative' })
   accountId: number;
 
-  @IsNotEmpty({ message: 'please provide description of the description' })
+  @IsNotEmpty({ message: 'description shouldnot be empty' })
   @IsString({ message: 'please provide description in the text' })
   @MinLength(15, { message: 'description should be greater than 15 characters' })
   description: string;

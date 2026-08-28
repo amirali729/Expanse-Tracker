@@ -19,7 +19,7 @@ export class AuthController {
   }
 
   @Post('login')
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.OK)
   async loginUser(@Body() dto: loginUserDto, @Res({ passthrough: true }) response: Response) {
     const user = await this.authservice.loginUser(dto);
     response.cookie('refresh_token', user.refreshToken, {
@@ -36,6 +36,8 @@ export class AuthController {
         username: user.username,
         email: user.email,
         accessToken: user.accessToken,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
       },
     };
   }

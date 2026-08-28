@@ -23,13 +23,19 @@ export class AuthService {
   async createUser(userData: CreatedUserInput): Promise<CreatedUserResponse> {
     const user = await this.authRepo.findUserByUsername(userData.username);
     if (user) {
-      throw new ConflictException('username and email must be unique');
+      throw new ConflictException({
+        code: 'USERNAME_ALREADY_EXISTS',
+        message: 'An account with this username already exists',
+      });
     }
     const hashedPassword = bcrypt.hashSync(userData.password, 10);
     userData.password = hashedPassword;
     const createdUser = await this.authRepo.create(userData);
     if (!createdUser) {
-      throw new InternalServerErrorException('cannot create user right now please try again');
+      throw new InternalServerErrorException({
+        code: 'USER_CREATION_FAILED',
+        message: 'user could not be created rightnow please try again later',
+      });
     }
     return toUserResponse(createdUser);
   }
@@ -37,11 +43,17 @@ export class AuthService {
   async loginUser(userData: loginUserInput): Promise<loginUserResponse> {
     const user = await this.authRepo.findUserByUsername(userData.username);
     if (!user) {
-      throw new BadRequestException('please give valid username or create account');
+      throw new BadRequestException({
+        code: 'INVALID_CREDENTIAL',
+        message: 'no user exist with this username please provide correct username',
+      });
     }
     const verifyPassword = await bcrypt.compare(userData.password, user.password);
     if (!verifyPassword) {
-      throw new BadRequestException('incorrect Password');
+      throw new BadRequestException({
+        code: 'INVALID_CREDENTIAL',
+        message: 'incorrect password try again',
+      });
     }
     const jwtUserData = {
       userId: user.id,
@@ -63,6 +75,8 @@ export class AuthService {
       email: user.email,
       accessToken,
       refreshToken,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
   }
 }

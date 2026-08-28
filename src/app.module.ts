@@ -5,6 +5,8 @@ import { PrismaModule } from './db/prisma.module';
 import { AccountModule } from './account/account.module';
 import { CategoryModule } from './category/category.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { APP_FILTER } from '@nestjs/core';
+import { GlobalExceptionFilter } from './shared/exception/global.exception-handler';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -18,6 +20,11 @@ import { TransactionModule } from './transaction/transaction.module';
     TransactionModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}

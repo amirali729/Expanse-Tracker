@@ -18,13 +18,17 @@ export class CategoryService {
       categoryData.name,
     );
     if (category) {
-      throw new ConflictException('category already exists');
+      throw new ConflictException({
+        code: 'CATEGORY_ALREADY_EXISTS',
+        message: 'An category with this name already exists',
+      });
     }
     const createdCategory = await this.categoryRepo.create(categoryData);
     if (!createdCategory) {
-      throw new InternalServerErrorException(
-        'cannot created category rightnow please try again late',
-      );
+      throw new InternalServerErrorException({
+        code: 'CATEGORY_CREATION_FAILED',
+        message: 'category could not be created right now please try again later',
+      });
     }
     return toCategoryResponse(createdCategory);
   }
@@ -32,7 +36,10 @@ export class CategoryService {
   async findAllCategory(userId: number) {
     const categories = await this.categoryRepo.getAllCategoryByUserId(userId);
     if (!categories) {
-      throw new NotFoundException('no category found');
+      throw new NotFoundException({
+        code: 'CATEGORY_NOT_FOUND',
+        message: 'category with this name not exists',
+      });
     }
     return categories.map(toCategoryResponse);
   }

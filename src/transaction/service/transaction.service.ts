@@ -12,7 +12,10 @@ export class TransactionService {
   async createTransaction(transactionInput: createTransactionInput, userId: number) {
     const account = await this.transactionrepo.getAccountById(userId, transactionInput.accountId);
     if (!account) {
-      throw new NotFoundException('Account doesnot exists');
+      throw new NotFoundException({
+        code: 'ACCOUNT_NOT_FOUND',
+        message: 'account with this name not exists',
+      });
     }
 
     const category = await this.transactionrepo.getCategoryById(
@@ -20,7 +23,10 @@ export class TransactionService {
       transactionInput.categoryId,
     );
     if (!category) {
-      throw new NotFoundException('category doesnot exists');
+      throw new NotFoundException({
+        code: 'CATEGORY_NOT_FOUND',
+        message: 'category with this name not exists',
+      });
     }
     if (transactionInput.transactionType === 'INCOME') {
       const transaction = await this.transactionrepo.create(transactionInput, userId);
@@ -47,7 +53,10 @@ export class TransactionService {
   async deleteTransaction(userId: number, transactionId: number) {
     const transaction = await this.transactionrepo.findTransactionById(userId, transactionId);
     if (!transaction) {
-      throw new NotFoundException('transaction not found');
+      throw new NotFoundException({
+        code: 'TRANSACTION_NOT_FOUND',
+        message: 'no transaction is found',
+      });
     }
     const deletedTransaction = await this.transactionrepo.deleteTransactionById(
       userId,
@@ -55,5 +64,17 @@ export class TransactionService {
     );
 
     return toTransactionResponse(deletedTransaction);
+  }
+
+  async getAllTransaction(userId: number) {
+    const transactions = await this.transactionrepo.findAllTransactionsByUserId(userId);
+    if (!transactions) {
+      throw new NotFoundException({
+        code: 'TRANSACTION_NOT_FOUND',
+        message: 'no transaction is found',
+      });
+    }
+
+    return transactions.map(toTransactionResponse);
   }
 }

@@ -1,13 +1,13 @@
 import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreateCategoryDto {
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: 'please provide name in the text' })
+  @IsNotEmpty({ message: 'name shouldnot be empty' })
   @MaxLength(15, { message: 'category name should not be lower than 15 character' })
   name: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: 'please provide name in the text' })
+  @IsNotEmpty({ message: 'description shouldnot be empty' })
   @MinLength(10, { message: 'description name cannot be greater than 10 characters' })
   description: string;
 }

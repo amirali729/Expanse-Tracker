@@ -26,14 +26,14 @@ export class CategoryController {
   }
 
   @Post()
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   async getAllCategory(@Req() request: Request) {
     const categories = await this.categoryservice.findAllCategory(request.user.userId);
 
     return {
-      statusCode: HttpStatus.CREATED,
-      message: 'Category created successfully',
+      statusCode: HttpStatus.OK,
+      message: 'Category retrived successfully',
       data: categories,
     };
   }

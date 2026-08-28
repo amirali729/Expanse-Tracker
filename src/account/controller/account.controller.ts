@@ -35,29 +35,29 @@ export class AccountController {
   }
 
   @Get(':accountId')
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   async accountDetails(@Req() request: Request, @Param('accountId') id: string) {
     const userId = request.user.userId;
     const accountId = Number(id);
-    const data = await this.accountService.accountDetail(userId, accountId);
+    const account = await this.accountService.accountDetail(userId, accountId);
     return {
-      statusCode: HttpStatus.ACCEPTED,
+      statusCode: HttpStatus.OK,
       message: 'Account retrieved successfully',
-      data: data,
+      data: account,
     };
   }
 
   @Get()
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   async allAccount(@Req() request: Request) {
     const userId = request.user.userId;
-    const data = await this.accountService.getAllAccounts(userId);
+    const accounts = await this.accountService.getAllAccounts(userId);
     return {
-      statusCode: HttpStatus.ACCEPTED,
+      statusCode: HttpStatus.OK,
       message: 'Accounts retrieved successfully',
-      data: data,
+      data: accounts,
     };
   }
 }

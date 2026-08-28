@@ -19,6 +19,8 @@ export interface loginUserResponse {
   email: string;
   accessToken: string;
   refreshToken: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface CreatedUserSessionInput {

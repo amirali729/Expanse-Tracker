@@ -15,11 +15,17 @@ export class AccountService {
   async createAccount(accountData: createdAccountData): Promise<createdAccountResponse> {
     const account = await this.accountRepo.findAccountByUser(accountData.userId, accountData.name);
     if (account) {
-      throw new ConflictException('account name with this name already exists');
+      throw new ConflictException({
+        code: 'ACCOUNT_ALREADY_EXISTS',
+        message: 'An account with this name already exists',
+      });
     }
     const createdAccount = await this.accountRepo.create(accountData);
     if (!createdAccount) {
-      throw new InternalServerErrorException('cannot create user right now please try again');
+      throw new InternalServerErrorException({
+        code: 'ACCOUNT_CREATION_FAILED',
+        message: 'account could not be created rightnow please try again later',
+      });
     }
     return toAccountResponse(createdAccount);
   }
@@ -27,7 +33,10 @@ export class AccountService {
   async accountDetail(userId: number, accountId: number) {
     const account = await this.accountRepo.findAccountById(userId, accountId);
     if (!account) {
-      throw new NotFoundException('account not found');
+      throw new NotFoundException({
+        code: 'ACCOUNT_NOT_FOUND',
+        message: 'account with this name not exists',
+      });
     }
 
     return toAccountResponse(account);
@@ -36,7 +45,10 @@ export class AccountService {
   async getAllAccounts(userId: number) {
     const accounts = await this.accountRepo.findAllAccountByUserId(userId);
     if (!accounts) {
-      throw new NotFoundException('account not found');
+      throw new NotFoundException({
+        code: 'ACCOUNT_NOT_FOUND',
+        message: 'account with this name not exists',
+      });
     }
 
     return accounts.map(toAccountResponse);
