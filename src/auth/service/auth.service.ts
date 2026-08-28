@@ -13,12 +13,12 @@ import {
 } from '../types/auth.type';
 import { toUserResponse } from '../mapper/auth.mapper';
 import bcrypt from 'bcrypt';
-import { jwtService } from 'src/shared/jwt/jwt';
+import { JwtService } from 'src/shared/jwt/jwt';
 @Injectable()
 export class AuthService {
   constructor(
     private readonly authRepo: AuthRepsoitory,
-    private readonly jwt: jwtService,
+    private readonly jwt: JwtService,
   ) {}
   async createUser(userData: CreatedUserInput): Promise<CreatedUserResponse> {
     const user = await this.authRepo.findUserByUsername(userData.username);

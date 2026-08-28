@@ -3,7 +3,7 @@ import { TransactionService } from '../service/transaction.service';
 import { AuthGuard } from 'src/shared/guard/auth';
 import type { Request } from 'express';
 import { CreateTransationDto } from '../dto/transaction.dto';
-@Controller('transaction')
+@Controller('transactions')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
@@ -14,7 +14,7 @@ export class TransactionController {
     const transaction = await this.transactionService.createTransaction(dto, request.user.userId);
     return {
       statusCode: HttpStatus.CREATED,
-      message: '',
+      message: 'Transaction created successfully',
       data: transaction,
     };
   }

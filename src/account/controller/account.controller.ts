@@ -14,7 +14,7 @@ import { AuthGuard } from 'src/shared/guard/auth';
 import { CreateAccountDto } from '../dto/account.dto';
 import type { Request } from 'express';
 
-@Controller('account')
+@Controller('accounts')
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 

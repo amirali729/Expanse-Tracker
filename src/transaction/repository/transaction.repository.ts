@@ -32,4 +32,24 @@ export class TransactionRepository {
     });
     return totalAmount;
   }
+
+  async getAccountById(userId: number, accountId: number) {
+    const account = await this.prisma.account.findFirst({
+      where: {
+        id: accountId,
+        userId,
+      },
+    });
+    return account;
+  }
+
+  async getCategoryById(userId: number, categoryId: number) {
+    const category = await this.prisma.category.findFirst({
+      where: {
+        id: categoryId,
+        userId,
+      },
+    });
+    return category;
+  }
 }
