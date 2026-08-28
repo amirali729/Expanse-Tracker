@@ -2,23 +2,23 @@ import { IsEnum, IsNotEmpty, IsPositive, IsString, MinLength } from 'class-valid
 import { TransactionType } from 'src/generated/prisma/enums';
 
 export class CreateTransationDto {
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'missing ID please provide category ID' })
   @IsPositive({ message: 'amount cannot be negative' })
   amount: number;
 
-  @IsEnum(TransactionType)
+  @IsEnum(TransactionType, { message: 'the transaction type should be EXPENSE or INCOME' })
   transactionType: TransactionType;
 
-  @IsNotEmpty()
-  @IsPositive()
+  @IsNotEmpty({ message: 'missing ID please provide category ID' })
+  @IsPositive({ message: 'category ID couldnot be negative' })
   categoryId: number;
 
-  @IsNotEmpty()
-  @IsPositive()
+  @IsNotEmpty({ message: 'missing ID please provide category ID' })
+  @IsPositive({ message: 'account Id couldnot be negative' })
   accountId: number;
 
   @IsNotEmpty({ message: 'please provide description of the description' })
-  @IsString()
+  @IsString({ message: 'please provide description in the text' })
   @MinLength(15, { message: 'description should be greater than 15 characters' })
   description: string;
 }

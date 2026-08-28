@@ -34,4 +34,26 @@ export class TransactionService {
     const transaction = await this.transactionrepo.create(transactionInput, userId);
     return toTransactionResponse(transaction);
   }
+
+  async transactionDetail(userId: number, transactionId: number) {
+    const transaction = await this.transactionrepo.findTransactionById(userId, transactionId);
+    if (!transaction) {
+      throw new NotFoundException('transaction not found');
+    }
+
+    return toTransactionResponse(transaction);
+  }
+
+  async deleteTransaction(userId: number, transactionId: number) {
+    const transaction = await this.transactionrepo.findTransactionById(userId, transactionId);
+    if (!transaction) {
+      throw new NotFoundException('transaction not found');
+    }
+    const deletedTransaction = await this.transactionrepo.deleteTransactionById(
+      userId,
+      transactionId,
+    );
+
+    return toTransactionResponse(deletedTransaction);
+  }
 }

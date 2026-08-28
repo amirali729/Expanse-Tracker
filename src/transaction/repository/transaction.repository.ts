@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/db/prisma.service';
 import { createTransactionInput } from '../types/transaction.types';
+import { Transaction } from 'src/generated/prisma/client';
 
 @Injectable()
 export class TransactionRepository {
@@ -51,5 +52,25 @@ export class TransactionRepository {
       },
     });
     return category;
+  }
+
+  async findTransactionById(userId: number, transactionId: number): Promise<Transaction | null> {
+    const transaction = await this.prisma.transaction.findFirst({
+      where: {
+        userId,
+        id: transactionId,
+      },
+    });
+    return transaction;
+  }
+
+  async deleteTransactionById(userId: number, transactionId: number): Promise<Transaction> {
+    const transaction = await this.prisma.transaction.delete({
+      where: {
+        userId,
+        id: transactionId,
+      },
+    });
+    return transaction;
   }
 }
