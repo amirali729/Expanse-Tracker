@@ -4,6 +4,7 @@ import { createTransactionInput } from '../types/transaction.types';
 import { toTransactionResponse } from '../mapper/transaction.mapper';
 import { Prisma } from 'src/generated/prisma/client';
 import { InsufficientBalance } from '../exception/transaction.exception';
+import { UpdateTransactionDto } from '../dto/transaction.dto';
 
 @Injectable()
 export class TransactionService {
@@ -76,5 +77,20 @@ export class TransactionService {
     }
 
     return transactions.map(toTransactionResponse);
+  }
+
+  async updateTransaction(transactionId: number, userId: number, dto: UpdateTransactionDto) {
+    const transaction = await this.transactionrepo.findTransactionById(userId, transactionId);
+
+    if (!transaction) {
+      throw new NotFoundException({
+        code: 'TRANSACTION_NOT_FOUND',
+        message: 'no transaction is found',
+      });
+    }
+
+    const updateTransaction = await this.transactionrepo.update(userId, transactionId, dto);
+
+    return toTransactionResponse(updateTransaction);
   }
 }

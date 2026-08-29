@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './db/prisma.module';
@@ -25,6 +25,7 @@ import { GlobalExceptionFilter } from './shared/exception/global.exception-handl
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
     },
+    Logger,
   ],
 })
 export class AppModule {}

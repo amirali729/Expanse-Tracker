@@ -6,6 +6,8 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
+  Patch,
   Post,
   Req,
   UseGuards,
@@ -13,7 +15,7 @@ import {
 import { TransactionService } from '../service/transaction.service';
 import { AuthGuard } from 'src/shared/guard/auth';
 import type { Request } from 'express';
-import { CreateTransationDto } from '../dto/transaction.dto';
+import { CreateTransationDto, UpdateTransactionDto } from '../dto/transaction.dto';
 @Controller('transactions')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
@@ -68,6 +70,24 @@ export class TransactionController {
       statusCode: HttpStatus.OK,
       message: 'Transactions retrieved successfully',
       data: transactions,
+    };
+  }
+
+  @Patch('transactionId')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  async update(
+    @Param('transactionId', ParseIntPipe) transactionId: number,
+    @Req() request: Request,
+    @Body() dto: UpdateTransactionDto,
+  ) {
+    const userId = request.user.userId;
+    const transaction = await this.transactionService.updateTransaction(transactionId, userId, dto);
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Transaction updated successfully',
+      data: transaction,
     };
   }
 }
