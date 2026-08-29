@@ -25,6 +25,7 @@ export interface loginUserResponse {
 
 export interface CreatedUserSessionInput {
   userId: number;
+  sessionId: string;
   tokenHash: string;
   expiresAt: Date;
 }

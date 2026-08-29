@@ -29,14 +29,37 @@ export class AuthRepsoitory {
   }
 
   async createSession(sessionData: CreatedUserSessionInput): Promise<RefreshSession> {
-    const { userId, expiresAt, tokenHash } = sessionData;
+    const { userId, expiresAt, tokenHash, sessionId } = sessionData;
     const session = await this.prisma.refreshSession.create({
       data: {
         userId,
+        sessionId,
         tokenHash,
         expiresAt,
       },
     });
     return session;
+  }
+  async findSessionById(sessionId: string): Promise<RefreshSession | null> {
+    const session = await this.prisma.refreshSession.findUnique({
+      where: {
+        sessionId,
+      },
+    });
+    return session;
+  }
+
+  async revokedSession(id: number, userId: number) {
+    const now = new Date();
+    await this.prisma.refreshSession.update({
+      where: {
+        id,
+        userId,
+      },
+      data: {
+        revokedAt: now,
+      },
+    });
+    return;
   }
 }

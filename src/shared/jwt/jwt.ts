@@ -5,6 +5,10 @@ export type AccessTokenPayload = {
   userId: number;
   username: string;
 };
+export type RefreshTokenPayload = {
+  userId: number;
+  sessionId: string;
+};
 
 @Injectable()
 export class JwtService {
@@ -20,7 +24,7 @@ export class JwtService {
     });
   }
 
-  createRefreshToken(data: AccessTokenPayload) {
+  createRefreshToken(data: RefreshTokenPayload) {
     const secret = process.env.REFRESH_SCERET_TOKEN;
 
     if (!secret) {
@@ -48,7 +52,7 @@ export class JwtService {
     return payload as AccessTokenPayload;
   }
 
-  verifyRefreshToken(token: string): AccessTokenPayload {
+  verifyRefreshToken(token: string): RefreshTokenPayload {
     const secret = process.env.REFRESH_SCERET_TOKEN;
 
     if (!secret) {
@@ -61,6 +65,6 @@ export class JwtService {
       throw new Error('Invalid refresh token payload');
     }
 
-    return payload as AccessTokenPayload;
+    return payload as RefreshTokenPayload;
   }
 }

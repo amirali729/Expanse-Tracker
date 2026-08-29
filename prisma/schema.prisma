@@ -93,6 +93,7 @@ model Account {
 
 model RefreshSession {
   id Int @id @default(autoincrement())
+  sessionId String   @unique 
 
   userId    Int
   tokenHash String

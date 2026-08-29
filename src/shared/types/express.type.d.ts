@@ -6,5 +6,9 @@ declare module 'express' {
       userId: number;
       username: string;
     };
+    refresh_token: {
+      userId: number;
+      sessionId: string;
+    };
   }
 }

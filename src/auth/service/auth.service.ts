@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthRepsoitory } from '../repository/auth.repository';
 import {
@@ -14,6 +15,7 @@ import {
 import { toUserResponse } from '../mapper/auth.mapper';
 import bcrypt from 'bcrypt';
 import { JwtService } from 'src/shared/jwt/jwt';
+import { randomUUID } from 'node:crypto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -55,17 +57,22 @@ export class AuthService {
         message: 'incorrect password try again',
       });
     }
+    const sessionId = randomUUID();
     const jwtUserData = {
       userId: user.id,
       username: user.username,
     };
     const accessToken = this.jwt.createAccessToken(jwtUserData);
-    const refreshToken = this.jwt.createRefreshToken(jwtUserData);
+    const refreshToken = this.jwt.createRefreshToken({
+      userId: user.id,
+      sessionId,
+    });
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7);
     await this.authRepo.createSession({
       userId: user.id,
+      sessionId,
       tokenHash: hashedRefreshToken,
       expiresAt,
     });
@@ -78,5 +85,45 @@ export class AuthService {
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };
+  }
+
+  async logoutUser(refreshToken: string) {
+    if (!refreshToken) {
+      throw new UnauthorizedException({
+        code: 'REFRESH_TOKEN_MISSING',
+        message: 'Refresh token is missing',
+      });
+    }
+
+    const payload = this.jwt.verifyRefreshToken(refreshToken);
+
+    const session = await this.authRepo.findSessionById(payload.sessionId);
+
+    if (!session) {
+      throw new UnauthorizedException({
+        code: 'INVALID_REFRESH_SESSION',
+        message: 'Invalid authentication session',
+      });
+    }
+
+    const isValidToken = await bcrypt.compare(refreshToken, session.tokenHash);
+
+    if (!isValidToken) {
+      throw new UnauthorizedException({
+        code: 'INVALID_REFRESH_TOKEN',
+        message: 'Invalid authentication session',
+      });
+    }
+
+    if (session.expiresAt <= new Date()) {
+      return;
+    }
+
+    if (session.revokedAt) {
+      return;
+    }
+
+    await this.authRepo.revokedSession(session.id, session.userId);
+    return;
   }
 }
