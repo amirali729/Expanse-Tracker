@@ -7,6 +7,7 @@ import { CategoryModule } from './category/category.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { APP_FILTER } from '@nestjs/core';
 import { GlobalExceptionFilter } from './shared/exception/global.exception-handler';
+import { DashboardModule } from './dashboard/dashboard.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -18,6 +19,7 @@ import { GlobalExceptionFilter } from './shared/exception/global.exception-handl
     AccountModule,
     CategoryModule,
     TransactionModule,
+    DashboardModule,
   ],
   controllers: [],
   providers: [
