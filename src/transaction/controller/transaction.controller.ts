@@ -73,7 +73,7 @@ export class TransactionController {
     };
   }
 
-  @Patch('transactionId')
+  @Patch(':transactionId')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   async update(

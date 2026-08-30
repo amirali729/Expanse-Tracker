@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { CategoryService } from '../service/category.service';
 import { AuthGuard } from 'src/shared/guard/auth';
 import type { Request } from 'express';
@@ -25,7 +25,7 @@ export class CategoryController {
     };
   }
 
-  @Post()
+  @Get()
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   async getAllCategory(@Req() request: Request) {
