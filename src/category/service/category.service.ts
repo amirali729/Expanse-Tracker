@@ -7,6 +7,7 @@ import {
 import { CategoryRespository } from '../repository/category.repository';
 import { createCategoryData, createCategoryResponse } from '../types/category.types';
 import { toCategoryResponse } from '../mapper/category.mapper';
+import { UpdateCategoryDto } from '../dto/category.dto';
 
 @Injectable()
 export class CategoryService {
@@ -45,7 +46,7 @@ export class CategoryService {
   }
 
   async deleteCategory(userId: number, categoyrId: number) {
-    const category = await this.categoryRepo.findcategoryById(userId, categoyrId);
+    const category = await this.categoryRepo.findCategoryById(userId, categoyrId);
 
     if (!category) {
       throw new NotFoundException({
@@ -56,5 +57,20 @@ export class CategoryService {
 
     const deletedCategory = await this.categoryRepo.delete(category.id);
     return toCategoryResponse(deletedCategory);
+  }
+
+  async updateCategory(categoryId: number, userId: number, dto: UpdateCategoryDto) {
+    const category = await this.categoryRepo.findCategoryById(userId, categoryId);
+
+    if (!category) {
+      throw new NotFoundException({
+        code: 'CATEGORY_NOT_FOUND',
+        message: 'no category is found',
+      });
+    }
+
+    const updateCategory = await this.categoryRepo.update(userId, categoryId, dto);
+
+    return toCategoryResponse(updateCategory);
   }
 }

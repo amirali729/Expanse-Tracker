@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Req,
   UseGuards,
@@ -13,7 +14,7 @@ import {
 import { CategoryService } from '../service/category.service';
 import { AuthGuard } from 'src/shared/guard/auth';
 import type { Request } from 'express';
-import { CreateCategoryDto } from '../dto/category.dto';
+import { CreateCategoryDto, UpdateCategoryDto } from '../dto/category.dto';
 
 @Controller('categories')
 export class CategoryController {
@@ -59,6 +60,25 @@ export class CategoryController {
     return {
       statusCode: HttpStatus.OK,
       message: 'Caegory deleted successfully',
+      data: category,
+    };
+  }
+
+  @Patch(':categoryId')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  async update(
+    @Param('categoryId') id: string,
+    @Req() request: Request,
+    @Body() dto: UpdateCategoryDto,
+  ) {
+    const userId = request.user.userId;
+    const categoryId = Number(id);
+    const category = await this.categoryservice.updateCategory(categoryId, userId, dto);
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Category updated successfully',
       data: category,
     };
   }

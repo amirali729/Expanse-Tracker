@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/db/prisma.service';
 import { Category } from 'src/generated/prisma/client';
 import { createCategoryData } from '../types/category.types';
+import { UpdateCategoryDto } from '../dto/category.dto';
 
 @Injectable()
 export class CategoryRespository {
@@ -49,7 +50,7 @@ export class CategoryRespository {
     });
   }
 
-  async findcategoryById(userId: number, categoryId: number): Promise<Category | null> {
+  async findCategoryById(userId: number, categoryId: number): Promise<Category | null> {
     const category = await this.prisma.category.findFirst({
       where: {
         userId,
@@ -57,5 +58,15 @@ export class CategoryRespository {
       },
     });
     return category;
+  }
+
+  async update(userId: number, categoryId: number, data: UpdateCategoryDto): Promise<Category> {
+    return this.prisma.category.update({
+      where: {
+        id: categoryId,
+        userId,
+      },
+      data,
+    });
   }
 }

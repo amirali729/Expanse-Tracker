@@ -7,6 +7,7 @@ import {
 import { AccountRespository } from '../repository/account.repository';
 import { createdAccountData, createdAccountResponse } from '../types/account.types';
 import { toAccountResponse } from '../mapper/account.mapper';
+import { UpdateAccountDto } from '../dto/account.dto';
 
 @Injectable()
 export class AccountService {
@@ -66,5 +67,20 @@ export class AccountService {
 
     const deletedAccount = await this.accountRepo.delete(account.id);
     return toAccountResponse(deletedAccount);
+  }
+
+  async updateAccount(accountId: number, userId: number, dto: UpdateAccountDto) {
+    const account = await this.accountRepo.findAccountById(userId, accountId);
+
+    if (!account) {
+      throw new NotFoundException({
+        code: 'ACCOUNT_NOT_FOUND',
+        message: 'no account is found',
+      });
+    }
+
+    const updateAccount = await this.accountRepo.update(userId, accountId, dto);
+
+    return toAccountResponse(updateAccount);
   }
 }
