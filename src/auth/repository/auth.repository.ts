@@ -10,7 +10,7 @@ export class AuthRepsoitory {
   async findUserByUsername(username: string): Promise<User | null> {
     const user = await this.prisma.user.findFirst({
       where: {
-        username: username,
+        username,
       },
     });
     return user;
@@ -61,5 +61,28 @@ export class AuthRepsoitory {
       },
     });
     return;
+  }
+
+  async findUserById(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    return user;
+  }
+
+  async updateUserPassword(userId: number, newPassword: string) {
+    const user = await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        password: {
+          set: newPassword,
+        },
+      },
+    });
+    return user;
   }
 }

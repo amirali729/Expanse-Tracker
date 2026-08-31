@@ -16,6 +16,7 @@ import { toUserResponse } from '../mapper/auth.mapper';
 import bcrypt from 'bcrypt';
 import { JwtService } from 'src/shared/jwt/jwt';
 import { randomUUID } from 'node:crypto';
+import { resetPasswordDto } from '../dto/auth.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -124,6 +125,32 @@ export class AuthService {
     }
 
     await this.authRepo.revokedSession(session.id, session.userId);
+    return;
+  }
+
+  async resetPassword(userId: number, passswordData: resetPasswordDto) {
+    if (passswordData.oldPassword === passswordData.newPassword) {
+      throw new BadRequestException({
+        code: 'INVALID_CREDENTIAL',
+        message: 'new password cannot be same as old password',
+      });
+    }
+    const user = await this.authRepo.findUserById(userId);
+    if (!user) {
+      throw new UnauthorizedException({
+        code: 'Unauthorized',
+        message: 'login first',
+      });
+    }
+    const verifyPassword = await bcrypt.compare(passswordData.oldPassword, user.password);
+    if (!verifyPassword) {
+      throw new BadRequestException({
+        code: 'INVALID_CREDENTIAL',
+        message: 'incorrect password try again',
+      });
+    }
+    const newHashedPassword = await bcrypt.hash(passswordData.newPassword, 10);
+    await this.authRepo.updateUserPassword(user.id, newHashedPassword);
     return;
   }
 }

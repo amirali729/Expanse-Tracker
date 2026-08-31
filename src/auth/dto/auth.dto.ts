@@ -28,3 +28,15 @@ export class loginUserDto {
   @MinLength(8, { message: 'password cannot be lower than 8 characters' })
   password: string;
 }
+
+export class resetPasswordDto {
+  @IsString({ message: 'please provide oldpassword in the text' })
+  @IsNotEmpty({ message: 'please provide oldpassword of the description' })
+  @MinLength(8, { message: 'oldpassword cannot be lower than 8 characters' })
+  oldPassword: string;
+
+  @IsString({ message: 'please provide newpassword in the text' })
+  @IsNotEmpty({ message: 'please provide newpassword of the description' })
+  @MinLength(8, { message: 'newpassword cannot be lower than 8 characters' })
+  newPassword: string;
+}

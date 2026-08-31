@@ -7,10 +7,12 @@ import {
   Req,
   Res,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from '../service/auth.service';
-import { CreateUserDto, loginUserDto } from '../dto/auth.dto';
+import { CreateUserDto, loginUserDto, resetPasswordDto } from '../dto/auth.dto';
 import type { Response, Request } from 'express';
+import { AuthGuard } from 'src/shared/guard/auth';
 
 @Controller('auth')
 export class AuthController {
@@ -52,6 +54,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @HttpCode(HttpStatus.OK)
   async logout(@Req() request: Request, @Res({ passthrough: true }) response: Response) {
     const refreshToken = request.cookies.refresh_token as string;
 
@@ -64,8 +67,21 @@ export class AuthController {
     response.clearCookie('refresh_token');
 
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       message: 'User logged out successfully',
+      data: null,
+    };
+  }
+
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  async resetPassword(@Req() request: Request, @Body() dto: resetPasswordDto) {
+    const userId = request.user.userId;
+    await this.authservice.resetPassword(userId, dto);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Password reset successfully',
       data: null,
     };
   }
