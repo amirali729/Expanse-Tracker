@@ -1,4 +1,15 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CategoryService } from '../service/category.service';
 import { AuthGuard } from 'src/shared/guard/auth';
 import type { Request } from 'express';
@@ -35,6 +46,20 @@ export class CategoryController {
       statusCode: HttpStatus.OK,
       message: 'Category retrived successfully',
       data: categories,
+    };
+  }
+
+  @Delete(':categoryId')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  async delete(@Req() request: Request, @Param('categoryId') id: string) {
+    const userId = request.user.userId;
+    const categoryId = Number(id);
+    const category = await this.categoryservice.deleteCategory(userId, categoryId);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Caegory deleted successfully',
+      data: category,
     };
   }
 }

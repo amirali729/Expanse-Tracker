@@ -40,4 +40,22 @@ export class CategoryRespository {
 
     return categories;
   }
+
+  async delete(categoryId: number): Promise<Category> {
+    return await this.prisma.category.delete({
+      where: {
+        id: categoryId,
+      },
+    });
+  }
+
+  async findcategoryById(userId: number, categoryId: number): Promise<Category | null> {
+    const category = await this.prisma.category.findFirst({
+      where: {
+        userId,
+        id: categoryId,
+      },
+    });
+    return category;
+  }
 }

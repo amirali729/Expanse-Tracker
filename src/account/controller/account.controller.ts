@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -58,6 +59,20 @@ export class AccountController {
       statusCode: HttpStatus.OK,
       message: 'Accounts retrieved successfully',
       data: accounts,
+    };
+  }
+
+  @Delete(':accountId')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  async delete(@Req() request: Request, @Param('accountId') id: string) {
+    const userId = request.user.userId;
+    const accountId = Number(id);
+    const Account = await this.accountService.deleteAccount(userId, accountId);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Account deleted successfully',
+      data: Account,
     };
   }
 }

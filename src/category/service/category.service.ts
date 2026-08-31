@@ -43,4 +43,18 @@ export class CategoryService {
     }
     return categories.map(toCategoryResponse);
   }
+
+  async deleteCategory(userId: number, categoyrId: number) {
+    const category = await this.categoryRepo.findcategoryById(userId, categoyrId);
+
+    if (!category) {
+      throw new NotFoundException({
+        code: 'CATEGORY_NOT_FOUND',
+        message: 'category with this name not exists',
+      });
+    }
+
+    const deletedCategory = await this.categoryRepo.delete(category.id);
+    return toCategoryResponse(deletedCategory);
+  }
 }

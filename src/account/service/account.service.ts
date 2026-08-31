@@ -53,4 +53,18 @@ export class AccountService {
 
     return accounts.map(toAccountResponse);
   }
+
+  async deleteAccount(userId: number, accountId: number) {
+    const account = await this.accountRepo.findAccountById(userId, accountId);
+
+    if (!account) {
+      throw new NotFoundException({
+        code: 'ACCOUNT_NOT_FOUND',
+        message: 'account with this name not exists',
+      });
+    }
+
+    const deletedAccount = await this.accountRepo.delete(account.id);
+    return toAccountResponse(deletedAccount);
+  }
 }

@@ -46,4 +46,12 @@ export class AccountRespository {
     });
     return accounts;
   }
+
+  async delete(accountId: number): Promise<Account> {
+    return await this.prisma.account.delete({
+      where: {
+        id: accountId,
+      },
+    });
+  }
 }
