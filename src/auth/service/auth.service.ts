@@ -153,4 +153,16 @@ export class AuthService {
     await this.authRepo.updateUserPassword(user.id, newHashedPassword);
     return;
   }
+
+  async getUserProfile(userId: number) {
+    const user = await this.authRepo.findUserById(userId);
+    if (!user) {
+      throw new UnauthorizedException({
+        code: 'Unauthorized',
+        message: 'login first',
+      });
+    }
+
+    return toUserResponse(user);
+  }
 }

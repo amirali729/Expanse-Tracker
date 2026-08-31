@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -83,6 +84,19 @@ export class AuthController {
       statusCode: HttpStatus.OK,
       message: 'Password reset successfully',
       data: null,
+    };
+  }
+
+  @Get('profile')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  async userProfile(@Req() request: Request) {
+    const userId = request.user.userId;
+    const user = await this.authservice.getUserProfile(userId);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Profile retrieved successfully',
+      data: user,
     };
   }
 }
