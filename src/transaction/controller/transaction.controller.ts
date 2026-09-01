@@ -9,13 +9,18 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { TransactionService } from '../service/transaction.service';
 import { AuthGuard } from 'src/shared/guard/auth';
 import type { Request } from 'express';
-import { CreateTransationDto, UpdateTransactionDto } from '../dto/transaction.dto';
+import {
+  CreateTransationDto,
+  TransactionQueryDto,
+  UpdateTransactionDto,
+} from '../dto/transaction.dto';
 @Controller('transactions')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
@@ -63,9 +68,9 @@ export class TransactionController {
   @Get()
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
-  async allTransaction(@Req() request: Request) {
+  async allTransaction(@Req() request: Request, @Query() query: TransactionQueryDto) {
     const userId = request.user.userId;
-    const transactions = await this.transactionService.getAllTransaction(userId);
+    const transactions = await this.transactionService.getAllTransaction(query, userId);
     return {
       statusCode: HttpStatus.OK,
       message: 'Transactions retrieved successfully',

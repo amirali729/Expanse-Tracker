@@ -1,6 +1,8 @@
 import {
   IsDate,
+  IsDateString,
   IsEnum,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsPositive,
@@ -9,6 +11,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { TransactionType } from 'src/generated/prisma/enums';
+import { Type } from 'class-transformer';
 
 export class CreateTransationDto {
   @IsNotEmpty({ message: 'missing ID please provide category ID' })
@@ -60,4 +63,28 @@ export class UpdateTransactionDto {
   @IsDate()
   @IsNotEmpty()
   transactionDate?: Date;
+}
+
+export class TransactionQueryDto {
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  accountId?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  categoryId?: number;
+
+  @IsOptional()
+  @IsEnum(TransactionType)
+  transactionType?: TransactionType;
+
+  @IsOptional()
+  @IsDateString()
+  startDate?: string;
+
+  @IsOptional()
+  @IsDateString()
+  endDate?: string;
 }

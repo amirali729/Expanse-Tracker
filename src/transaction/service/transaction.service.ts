@@ -4,7 +4,7 @@ import { createTransactionInput } from '../types/transaction.types';
 import { toTransactionResponse } from '../mapper/transaction.mapper';
 import { Prisma } from 'src/generated/prisma/client';
 import { InsufficientBalance } from '../exception/transaction.exception';
-import { UpdateTransactionDto } from '../dto/transaction.dto';
+import { TransactionQueryDto, UpdateTransactionDto } from '../dto/transaction.dto';
 
 @Injectable()
 export class TransactionService {
@@ -67,16 +67,36 @@ export class TransactionService {
     return toTransactionResponse(deletedTransaction);
   }
 
-  async getAllTransaction(userId: number) {
-    const transactions = await this.transactionrepo.findAllTransactionsByUserId(userId);
-    if (!transactions) {
-      throw new NotFoundException({
-        code: 'TRANSACTION_NOT_FOUND',
-        message: 'no transaction is found',
-      });
+  async getAllTransaction(query: TransactionQueryDto, userId: number) {
+    const where: Prisma.TransactionWhereInput = {};
+    where.userId = userId;
+
+    if (query.accountId !== undefined) {
+      where.accountId = query.accountId;
     }
 
-    return transactions.map(toTransactionResponse);
+    if (query.categoryId !== undefined) {
+      where.categoryId = query.categoryId;
+    }
+
+    if (query.transactionType !== undefined) {
+      where.transactionType = query.transactionType;
+    }
+
+    if (query.startDate || query.endDate) {
+      where.transactionDate = {};
+
+      if (query.startDate) {
+        where.transactionDate.gte = new Date(query.startDate);
+      }
+
+      if (query.endDate) {
+        where.transactionDate.lte = new Date(query.endDate);
+      }
+    }
+
+    const transaction = await this.transactionrepo.findAllTransactionsByUserIdAndQuery(where);
+    return transaction.map(toTransactionResponse);
   }
 
   async updateTransaction(transactionId: number, userId: number, dto: UpdateTransactionDto) {
