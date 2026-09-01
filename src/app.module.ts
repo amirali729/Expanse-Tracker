@@ -8,6 +8,8 @@ import { TransactionModule } from './transaction/transaction.module';
 import { APP_FILTER } from '@nestjs/core';
 import { GlobalExceptionFilter } from './shared/exception/global.exception-handler';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { ReportModule } from './report/report.module';
+import { RepostController } from './repost/repost.controller';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,8 +22,9 @@ import { DashboardModule } from './dashboard/dashboard.module';
     CategoryModule,
     TransactionModule,
     DashboardModule,
+    ReportModule,
   ],
-  controllers: [],
+  controllers: [RepostController],
   providers: [
     {
       provide: APP_FILTER,
