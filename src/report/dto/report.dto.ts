@@ -12,13 +12,11 @@ import {
 } from 'class-validator';
 
 export class MonthlyReportQueryDto {
-  @IsOptional()
   @IsDateString()
-  year?: string;
+  year: string;
 
-  @IsOptional()
   @IsDateString()
-  month?: string;
+  month: string;
 }
 
 export class ReportQueryDto {

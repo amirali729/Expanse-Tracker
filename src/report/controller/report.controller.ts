@@ -21,40 +21,37 @@ export class ReportController {
   @Get(':transactionType')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
-  getTransactionReport(
+  async getTransactionReport(
     @Req() request: Request,
     @Query() query: MonthlyReportQueryDto,
     @Param('transactionType') type: TransactionType,
   ) {
     const userId = request.user.userId;
+    const year = Number(query.year);
+    const month = Number(query.month);
+    const report = await this.reportService.getMonthlyTotal(userId, type, year, month);
     return {
       statusCode: HttpStatus.OK,
       message: 'Monthly income retrieved successfully',
-      data: {
-        userId,
-        query,
-        type,
-      },
+      data: report,
     };
   }
 
-  @Get(':transactionType/categories')
+  @Get('expenses/categories')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
-  getTransactionCategoriesReport(
+  async getTransactionCategoriesReport(
     @Req() request: Request,
     @Query() query: MonthlyReportQueryDto,
-    @Param('transactionType') type: TransactionType,
   ) {
     const userId = request.user.userId;
+    const year = Number(query.year);
+    const month = Number(query.month);
+    const report = await this.reportService.getMonthlyCategories(userId, year, month);
     return {
       statusCode: HttpStatus.OK,
       message: 'Category expenses retrieved successfully',
-      data: {
-        userId,
-        query,
-        type,
-      },
+      data: report,
     };
   }
 
