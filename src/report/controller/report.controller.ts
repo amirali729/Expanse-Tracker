@@ -12,7 +12,7 @@ import { ReportService } from '../service/report.service';
 import { AuthGuard } from 'src/shared/guard/auth';
 import type { Request } from 'express';
 import { TransactionType } from 'src/generated/prisma/enums';
-import { MonthlyReportQueryDto, ReportQueryDto } from '../dto/report.dto';
+import { MonthlyReportQueryDto } from '../dto/report.dto';
 
 @Controller('report')
 export class ReportController {
@@ -52,41 +52,6 @@ export class ReportController {
       statusCode: HttpStatus.OK,
       message: 'Category expenses retrieved successfully',
       data: report,
-    };
-  }
-
-  @Get('categories')
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
-  getCategoriesReport(@Req() request: Request, @Query() query: MonthlyReportQueryDto) {
-    const userId = request.user.userId;
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Category expenses retrieved successfully',
-      data: {
-        query,
-        userId,
-      },
-    };
-  }
-
-  @Get('accounts/:accountId')
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
-  getAccountsReports(
-    @Req() request: Request,
-    @Query() query: ReportQueryDto,
-    @Param('accountId') accountId: number,
-  ) {
-    const userId = request.user.userId;
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Category expenses retrieved successfully',
-      data: {
-        userId,
-        accountId,
-        query,
-      },
     };
   }
 }
